@@ -1,0 +1,27 @@
+{
+  "name": "@chengzao/gh-toolkit-cli",
+  "version": "0.0.1-beta.1",
+  "description": "this is a demo for gh-toolkit-cli",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "README.md"
+  ],
+  "bin": {
+    "gh-toolkit": "index.js"
+  },
+  "scripts": {
+    "test": "echo \"this a test for gh-toolkit-cli\""
+  },
+  "repository": {
+    "url": "https://github.com/chengzao/publish-to-github-packages.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^12.1.0"
+  }
+}

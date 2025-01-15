@@ -1,0 +1,35 @@
+name: Tag on Version Change
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'package.json'
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 确保获取所有历史和标签
+
+      - name: Check if version changed
+        id: version_check
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Current version: $VERSION"
+          GIT_TAG=$(git tag --list "v$VERSION")
+          echo "exists=$GIT_TAG" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Create Git tag
+        if: steps.version_check.outputs.exists == ''
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a v${{ steps.version_check.outputs.version }} -m "Release v${{ steps.version_check.outputs.version }}"
+          git push origin v${{ steps.version_check.outputs.version }}
