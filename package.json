@@ -9,7 +9,9 @@
     "release": "changeset publish",
     "cli": "node scripts/cli.js",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "postpublish": "node scripts/create-tag.js"
+    "postpublish": "node scripts/create-tag.js",
+    "test": "echo no test specified",
+    "lint": "echo no lint specified"
   },
   "repository": {
     "url": "https://github.com/chengzao/publish-to-github-packages.git"
