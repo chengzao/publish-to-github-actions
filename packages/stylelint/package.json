@@ -49,6 +49,10 @@
     "tsup": "^8.2.4"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+     "registry": "https://npm.pkg.github.com"
+  },
+   "repository": {
+    "url": "https://github.com/chengzao/publish-to-github-packages.git"
   }
 }
