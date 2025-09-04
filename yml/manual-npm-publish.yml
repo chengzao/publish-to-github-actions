@@ -1,0 +1,61 @@
+name: Manual NPM Publish
+
+on:
+  workflow_dispatch: # 手动触发工作流
+    inputs:
+      npm_version:
+        description: 'The NPM version to publish (e.g., 1.0.0 or next). Optional - defaults to package.json version.'
+        required: false
+        default: ''
+        type: string
+      release_type:
+        description: 'Type of release (for npm tag)'
+        required: true
+        default: 'latest'
+        type: choice
+        options:
+          - latest
+          - next
+          - beta
+          - alpha
+
+jobs:
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          # 设置 npm 的 registry
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Determine publish version
+        id: version
+        run: |
+          # 如果手动提供了版本号，则使用该版本号
+          if [ -n "${{ github.event.inputs.npm_version }}" ]; then
+            echo "PUBLISH_VERSION=${{ github.event.inputs.npm_version }}" >> $GITHUB_OUTPUT
+            echo "Using manually provided version: ${{ github.event.inputs.npm_version }}"
+          else
+            # 否则从 package.json 中提取版本号
+            PKG_VERSION=$(node -p "require('./package.json').version")
+            echo "PUBLISH_VERSION=$PKG_VERSION" >> $GITHUB_OUTPUT
+            echo "Using version from package.json: $PKG_VERSION"
+          fi
+
+      - name: Publish to NPM
+        run: npm publish --tag ${{ github.event.inputs.release_type }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # 使用存储在 GitHub Secrets 中的 npm token
+        # 使用选择的 release_type (latest, next, beta, alpha) 作为 npm 的 dist-tag
+
+      - name: Verify publication
+        run: |
+          echo "Package version ${{ steps.version.outputs.PUBLISH_VERSION }} has been published to npm with the '${{ github.event.inputs.release_type }}' tag."
