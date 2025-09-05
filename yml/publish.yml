@@ -36,7 +36,9 @@ jobs:
         run: yarn build
 
       - name: Creating .npmrc
+        if: success()
         run: |
+          rm -rf .npmrc
           cat << EOF > "$HOME/.npmrc"
             @chengzao:registry=https://npm.pkg.github.com
             //npm.pkg.github.com/:_authToken=$GITHUB_TOKEN
@@ -45,7 +47,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to Github Packages
+        if: success()
         run: |
+          # Cleanup function to remove .npmrc
+          cleanup() {
+            rm -f "$HOME/.npmrc"
+          }
+
+          # Set trap to ensure cleanup runs on script exit
+          trap cleanup EXIT
+
+          # Get package version and name from package.json
           PUBLISH_VERSION=$(node -p "require('./package.json').version")
           PACKAGE_NAME=$(node -p "require('./package.json').name")
 
@@ -67,4 +79,4 @@ jobs:
               echo "🏷️ 版本号: $PUBLISH_VERSION"
               exit 1
             fi
-          fi  
+          fi
