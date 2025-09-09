@@ -39,6 +39,11 @@ case "$CURRENT_SHELL" in
     ;;
 esac
 
+if [ -z "$RC_FILE" ]; then
+  echo "❌ 检测到未适配的 shell，无法写入配置文件，终止脚本"
+  exit 1
+fi
+
 if [ -n "$RC_FILE" ]; then
   # 如果配置文件不存在就创建
   if [ ! -f "$RC_FILE" ]; then
