@@ -72,7 +72,7 @@ if [ -n "$RC_FILE" ]; then
   if [ ! -f "$RC_FILE" ]; then
     mkdir -p "$(dirname "$RC_FILE")"
     touch "$RC_FILE"
-    echo "ℹ️ 未找到 $RC_FILE，已自动创建"
+    echo "ℹ️  未找到 $RC_FILE，已自动创建"
   fi
 
   if ! grep -q "GITHUB_PACKAGES_NPM_TOKEN" "$RC_FILE"; then
@@ -82,7 +82,7 @@ export NPM_TOKEN="$(security find-generic-password -a "$USER" -s GITHUB_PACKAGES
 EOF
     echo "✅ 已在 $RC_FILE 添加动态加载 NPM_TOKEN"
   else
-    echo "ℹ️ $RC_FILE 已经有相关配置，跳过追加"
+    echo "ℹ️  $RC_FILE 已经有相关配置，跳过追加"
   fi
   # refresh shell
   source "$RC_FILE"
@@ -91,7 +91,7 @@ fi
 # 4. 配置全局 ~/.npmrc（如果没有就写入）
 if [ ! -f ~/.npmrc ]; then
   touch ~/.npmrc
-  echo "ℹ️ 正在创建 ~/.npmrc 文件"
+  echo "ℹ️  正在创建 ~/.npmrc 文件"
 fi
 cat <<EOF > ~/.npmrc
 @${GITHUB_ORG_NAME}:registry=https://npm.pkg.github.com
