@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# 判断是否为 macOS 系统
+if [[ "$(uname)" != "Darwin" ]]; then
+  echo "❌ 此脚本仅支持 macOS 系统"
+  exit 1
+fi
+
 # 设置严格模式，提高脚本健壮性
 set -euo pipefail
 
