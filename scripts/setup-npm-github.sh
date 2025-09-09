@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # 设置严格模式，提高脚本健壮性
-# set -euo pipefail
+set -euo pipefail
 
 # 捕获中断信号，提供更好的用户体验
 trap 'echo -e "\n❌ 脚本被中断"; exit 1' INT TERM
@@ -78,7 +78,7 @@ EOF
   else
     echo "ℹ️ $RC_FILE 已经有相关配置，跳过追加"
   fi
-  source "$RC_FILE"
+  # source "$RC_FILE"
 fi
 
 # 4. 配置全局 ~/.npmrc（如果没有就写入）
