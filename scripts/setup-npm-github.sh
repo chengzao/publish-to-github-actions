@@ -13,8 +13,12 @@ if [ -z "$GITHUB_TOKEN" ]; then
 fi
 
 # 2. 存入 macOS Keychain
-security add-generic-password -a "$USER" -s GITHUB_PACKAGES_NPM_TOKEN -w "$GITHUB_TOKEN" -U
-echo "✅ Token 已保存到 Keychain"
+if security add-generic-password -a "$USER" -s GITHUB_PACKAGES_NPM_TOKEN -w "$GITHUB_TOKEN" -U; then
+  echo "✅ Token 已保存到 Keychain"
+else
+  echo "❌ 保存 Token 到 Keychain 失败, 请检查权限"
+  exit 1
+fi
 
 # 3. 在对应 shell 配置文件里添加动态读取逻辑（如果没有就追加）
 CURRENT_SHELL=$(basename "$SHELL")
@@ -77,8 +81,17 @@ fi
 
 # 5. 验证环境变量是否可用
 echo "🔍 检查 NPM_TOKEN:"
-echo $NPM_TOKEN
+if [ -n "$NPM_TOKEN" ]; then
+  echo "🔍 NPM_TOKEN 已成功加载（长度：${#NPM_TOKEN}）"
+else
+  echo "❌ NPM_TOKEN 未正确加载"
+fi
 
 # 6. 验证 npm 是否能正确登录
 echo "🔍 验证 npm whoami:"
-npm whoami --registry=https://npm.pkg.github.com || echo "⚠️ 登录失败，请检查 token 权限（需要 read:packages）"
+if GITHUB_PKG_NAME=$(npm whoami --registry=https://npm.pkg.github.com 2>/dev/null); then
+  echo "✅ npm 登录验证成功，用户名: $GITHUB_PKG_NAME"
+else
+  echo "❌ 登录验证失败，请检查 token 权限（需要 read:packages）"
+  exit 1
+fi
