@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# 设置严格模式，提高脚本健壮性
+# set -euo pipefail
+
+# 捕获中断信号，提供更好的用户体验
+trap 'echo -e "\n❌ 脚本被中断"; exit 1' INT TERM
+
 # 1. 控制台输入 GitHub Token（不会显示在屏幕上）
 echo -e "\033[33m⚠️  控制台不会显示输入的 GitHub Token，请勿将 Token 泄露给别人\033[0m"
 echo -en "\033[32m🔒 请输入 GitHub Token 后回车: \033[0m"
@@ -10,6 +16,13 @@ echo
 if [ -z "$GITHUB_TOKEN" ]; then
   echo "❌ GitHub Token 不能为空"
   exit 1
+fi
+
+# 输入 GitHub 组织名，如果无输入则默认为 yolotechnology
+echo -en "\033[32m🏢 请输入 GitHub 组织名, 可选填 (默认为 yolotechnology): \033[0m"
+read GITHUB_ORG_NAME
+if [ -z "$GITHUB_ORG_NAME" ]; then
+  GITHUB_ORG_NAME="yolotechnology"
 fi
 
 # 2. 存入 macOS Keychain
@@ -69,9 +82,9 @@ EOF
 fi
 
 # 4. 配置全局 ~/.npmrc（如果没有就写入）
-if ! grep -q "@yolotechnology:registry" ~/.npmrc 2>/dev/null; then
-  cat <<'EOF' >> ~/.npmrc
-@yolotechnology:registry=https://npm.pkg.github.com
+if ! grep -q "@${GITHUB_ORG_NAME}:registry" ~/.npmrc 2>/dev/null; then
+  cat <<EOF >> ~/.npmrc
+@${GITHUB_ORG_NAME}:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
 EOF
   echo "✅ 已写入 ~/.npmrc"
