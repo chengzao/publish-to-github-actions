@@ -31,9 +31,6 @@ case "$CURRENT_SHELL" in
       RC_FILE="$HOME/.bash_profile"
     fi
     ;;
-  fish)
-    RC_FILE="$HOME/.config/fish/config.fish"
-    ;;
   *)
     echo "⚠️ 检测到未适配的 shell: $CURRENT_SHELL"
     echo "👉 将仅在当前会话里设置 NPM_TOKEN，不会写入配置文件"
@@ -50,31 +47,16 @@ if [ -n "$RC_FILE" ]; then
     echo "ℹ️ 未找到 $RC_FILE，已自动创建"
   fi
 
-  if [ "$CURRENT_SHELL" = "fish" ]; then
-    # fish 用 set -Ux 方式配置全局变量
-    if ! grep -q "GITHUB_PACKAGES_NPM_TOKEN" "$RC_FILE"; then
-      cat <<'EOF' >> "$RC_FILE"
-# Load GitHub Packages token from macOS Keychain (fish)
-set -Ux NPM_TOKEN (security find-generic-password -a "$USER" -s GITHUB_PACKAGES_NPM_TOKEN -w 2>/dev/null)
-EOF
-      echo "✅ 已在 $RC_FILE 添加动态加载 NPM_TOKEN (fish)"
-    else
-      echo "ℹ️ $RC_FILE 已经有相关配置，跳过追加"
-    fi
-    source "$RC_FILE"
-  else
-    # zsh / bash
-    if ! grep -q "GITHUB_PACKAGES_NPM_TOKEN" "$RC_FILE"; then
-      cat <<'EOF' >> "$RC_FILE"
+  if ! grep -q "GITHUB_PACKAGES_NPM_TOKEN" "$RC_FILE"; then
+    cat <<'EOF' >> "$RC_FILE"
 # Load GitHub Packages token from macOS Keychain
 export NPM_TOKEN="$(security find-generic-password -a "$USER" -s GITHUB_PACKAGES_NPM_TOKEN -w 2>/dev/null)"
 EOF
-      echo "✅ 已在 $RC_FILE 添加动态加载 NPM_TOKEN"
-    else
-      echo "ℹ️ $RC_FILE 已经有相关配置，跳过追加"
-    fi
-    source "$RC_FILE"
+    echo "✅ 已在 $RC_FILE 添加动态加载 NPM_TOKEN"
+  else
+    echo "ℹ️ $RC_FILE 已经有相关配置，跳过追加"
   fi
+  source "$RC_FILE"
 fi
 
 # 4. 配置全局 ~/.npmrc（如果没有就写入）
