@@ -90,6 +90,7 @@ fi
 
 # 4. 配置全局 ~/.npmrc（如果没有就写入）
 if [ ! -f ~/.npmrc ]; then
+  touch ~/.npmrc
   echo "ℹ️ 正在创建 ~/.npmrc 文件"
 fi
 cat <<EOF > ~/.npmrc
