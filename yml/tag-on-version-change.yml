@@ -9,6 +9,7 @@ on:
 
 jobs:
   tag:
+    name: Create Tag
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -40,3 +41,9 @@ jobs:
           git tag -a v${{ steps.version_check.outputs.version }} -m "Release v${{ steps.version_check.outputs.version }}"
           git push origin v${{ steps.version_check.outputs.version }}
           echo "✅ Successfully created and pushed tag v${{ steps.version_check.outputs.version }}"
+      
+      - name: Create Changelog
+        if: steps.version_check.outputs.exists == 'false'
+        run: npx changelogithub # or changelogithub@0.12 to ensure a stable result
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
