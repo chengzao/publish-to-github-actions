@@ -46,16 +46,16 @@ jobs:
       - name: Build with dumi
         run: cd website && pnpm run build
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v3 
         with:
           path: ./website/dist # 指定要部署的目录
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v5 # 配置 GitHub Pages
+
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v4 # 部署到 GitHub Pages
         id: deployment
         with:
           token: ${{ github.token }}
