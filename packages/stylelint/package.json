@@ -38,7 +38,7 @@
     "@types/set-value": "^4.0.3",
     "comment-json": "^4.2.5",
     "defu": "^6.1.4",
-    "get-value": "^3.0.1",
+    "get-value": "^4.0.0",
     "set-value": "^4.1.0",
     "stylelint": "^16.9.0",
     "stylelint-config-recess-order": "^5.1.0",
